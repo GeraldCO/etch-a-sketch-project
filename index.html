@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/index.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>etch a sketch</title>
+</head>
+<body>
+    <button id="reset"></button>
+    <p>Color</p>
+    <div>
+        <button id="blue">Blue</button>
+        <button id="rgb">Random rgb</button>
+        <div>
+            <input type="range" min="4" max="50" id="sizeChanger" value="20">
+            <span id="sizeChangerValue"></span>
+        </div>
+    
+    </div>
+    <div class="container">
+    </div>
+    <script>
+        const container = document.querySelector('.container');
+        const resetBtn = document.querySelector('#reset');
+        const rgbBtn= document.querySelector('#rgb');
+        const blueBtn = document.querySelector('#blue');
+        const sizeChanger = document.querySelector('#sizeChanger');
+        const sizeChangerValueSpan = document.querySelector('#sizeChangerValue');
+
+
+        sizeChangerValueSpan.textContent = sizeChanger.value;
+
+        sizeChanger.addEventListener('input', changeGrid);
+
+
+        var color = 'blue';
+        makeGrid(16, 16);
+        const allCells = document.querySelectorAll('.cell');
+
+        resetBtn.textContent = "Reset the grid";
+        resetBtn.addEventListener('click', resetGridColor);
+
+        rgbBtn.addEventListener('click', ()=>{
+            allCells.forEach( item => {
+                item.removeEventListener('mouseover', changeColor)
+            });
+
+            allCells.forEach(item => {
+                item.addEventListener('mouseover', changeColor2);
+            });            
+        });
+
+        blueBtn.addEventListener('click', ()=>{
+            allCells.forEach( item => {
+                item.removeEventListener('mouseover', changeColor2)
+            });
+
+            allCells.forEach(item => {
+                item.addEventListener('mouseover', changeColor);
+            });
+        });
+        
+        allCells.forEach(item => {
+                item.addEventListener('mouseover', changeColor);
+        });
+
+        function reset(e){
+            container.innerHTML = '';
+            rows = 16;
+            columns = 16;
+            makeGrid(rows, columns);
+            color = 'yellow';
+            paintCell(e);
+
+            document.querySelectorAll('.cell').forEach(item => {
+                item.addEventListener('mouseover', ()=>{
+                    e.target.style.backgroundColor = rgb('');
+                });
+            });
+        }
+
+        function random_rgba() {
+            var o = Math.round, r = Math.random, s = 255;
+            return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
+        }
+
+        function changeGrid(){
+            var size = sizeChanger.value;
+            sizeChangerValueSpan.textContent = size;
+
+            var gridSize = sizeChanger.value;
+            container.style.gridTemplateColumns = 'repeat('+ gridSize +', 1fr)';
+            container.style.gridTemplateRows = 'repeat('+ gridSize +', 1fr)';
+            makeGrid(columns, rows);
+        }
+
+        function resetGridColor(){
+            allCells.forEach (item => {
+                item.style.backgroundColor = '';
+            });
+        }
+
+        function changeColor(e){
+            e.target.style.backgroundColor = 'blue';
+        }
+
+        function changeColor2(e){
+            e.target.style.backgroundColor = color;
+            color = random_rgba();
+        }
+
+        function makeGrid(cols, rows){
+            for(i=0;i<(cols * rows); i++){
+                let cell = document.createElement('div');
+                cell.className= 'cell';
+                container.appendChild(cell);
+            }
+        }
+
+    </script>
+</body>
+</html>
